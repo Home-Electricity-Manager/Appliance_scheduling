@@ -3,6 +3,7 @@
 (https://github.com/Jeevesh8/)
 """
 
+import datetime as dt
 import utils
 import device_feed_map as dfm
 from data_sender import send
@@ -27,8 +28,8 @@ for timestamp, device_onoff_dic in time_to_devices_dic.items() :
     
     for feed, device_onoff_dic in feed_dic :
         onoff_lis = get_final_onoff_lis(feed, device_onoff_dic)
-
-        t = Timer(timestamp-exp_pkt_send_delay, send, feed_no = feed,
+        delta_time = timestamp - dt.datetime.today().timestamp() - exp_pkt_send_delay
+        t = Timer(delta_time, send, feed_no = feed,
                                                       onoff_lis = onoff_lis, time=timestamp, 
                                                       device_states = dfm.initial_device_states.copy())
         t.start()
