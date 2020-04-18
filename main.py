@@ -7,7 +7,10 @@ Created on Sat Dec 14 23:50:28 2019
 import numpy as np
 import sys
 import pandas as pd
-prices =[0.047,0.044,0.042,0.042,0.043,0.045,0.053,0.065,0.081,0.080,0.070,0.060,0.053,0.052,0.054,0.059,0.067,0.093,0.091,0.083,0.060,0.054,0.053,0.050]
+import matplotlib.pyplot as plt
+import csv
+prices =[2.5,2.2,1.6,2.3,2.7,2.7,2.8,2.3,3.8,4.2,4.7,6.3,5.1,4.8,5.3,4.4,4.4,3.7,3.5,3.5,3.4,3.2,2.9,2.7]
+#[0.047,0.044,0.042,0.042,0.043,0.045,0.053,0.065,0.081,0.080,0.070,0.060,0.053,0.052,0.054,0.059,0.067,0.093,0.091,0.083,0.060,0.054,0.053,0.050]
 #[0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.120,0.120,0.06,0.06,0.06,0.06]
 #[0.045,0.045,0.045,0.045,0.045,0.045,0.045,0.045,0.06,0.06,0.06,0.045,0.045,0.045,0.045,0.045,0.045,0.045,0.09,0.09,0.045,0.045,0.045,0.045]
 #[0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06,0.06]
@@ -82,12 +85,12 @@ def schedule(devices):
 taskfile = open('tasks.txt')
 lines = taskfile.readlines()
 devices = []
-renewable = 6
+renewable = 150
 battery = 0
-battery_max = 12
+battery_max = 20
 power = 0
 cost = 0
-
+grap=[]
 while lines:
     line = lines[0].split(' ')
     if len(line) == 7 :
@@ -138,7 +141,7 @@ for i in range(0,1440,5):#change step
                     power = power + d.power
                     cost = cost + d.power*prices[k]
                 
-                
+        grap.append(1)                
     else :
         if renewable <= 0 and battery > 0:
             for d in devices:
@@ -149,6 +152,9 @@ for i in range(0,1440,5):#change step
                         curr_phase = curr_phase + 1
                     if d[1][curr_phase].execution > 0:
                         if d[1][curr_phase].state == 1:
+                            '''ty=d[1][curr_phase]
+                            ty.power=(-1)*ty.power
+                            ready_devices.append(ty)'''
                             ready_devices.append(d[1][curr_phase])
                             d[1][curr_phase].run()
                             if d[1][curr_phase].power <= battery:
@@ -160,12 +166,18 @@ for i in range(0,1440,5):#change step
                         else:
                             if d[1][curr_phase].ready(i,i+5) and d[1][curr_phase].power <= battery: #change step
                                 d[1][curr_phase].state = 1
+                                '''tyx=d[1][curr_phase]
+                                tyx.power=(-1)*tyx.power
+                                ready_devices.append(tyx)'''
                                 ready_devices.append(d[1][curr_phase])
                                 d[1][curr_phase].run()
                                 battery = battery - d[1][curr_phase].power
 
                 else:            
                     if d.ready(i,i+5) and d.execution > 0 and d.power <= battery:#change step acc to requirement
+                        '''ty1=d
+                        ty1.power=(-1)*ty1.power
+                        ready_devices.append(ty1)'''
                         ready_devices.append(d)
                         d.run()
                         battery = battery - d.power
@@ -179,6 +191,9 @@ for i in range(0,1440,5):#change step
                         curr_phase = curr_phase + 1
                     if d[1][curr_phase].execution > 0:
                         if d[1][curr_phase].state == 1:
+                            '''tyy=d[1][curr_phase]
+                            tyy.power=(-1)*tyy.power
+                            ready_devices.append(tyy)'''
                             ready_devices.append(d[1][curr_phase])
                             d[1][curr_phase].run()
                             if d[1][curr_phase].power <= renewable:
@@ -200,6 +215,9 @@ for i in range(0,1440,5):#change step
             for d in x:
                 if d.power <= renewable :
                     d.state=1
+                    '''ki=d
+                    ki.power=(-1)*ki.power
+                    ready_devices.append(ki)'''
                     ready_devices.append(d)
                     d.run()
                     renewable = renewable - d.power
@@ -207,7 +225,9 @@ for i in range(0,1440,5):#change step
             if renewable > 0 and battery <= battery_max :
                 if battery + renewable <= battery_max:
                     battery = battery + renewable
-                
+        
+        grap.append(0)  
+          
     per_hour.append(ready_devices)  
                   
 
@@ -272,10 +292,57 @@ col = []
 col.append("Device")
 for i in range(0,1440,5):#change step
     col.append(str(i)+'-'+str(i+5)) #change step 
+
+
 df = pd.DataFrame(columns = col,data = data1)      
-df.set_index('Device').T.plot(figsize=(20,20),kind='bar',stacked=True)                  
-     
+df.set_index('Device').T.plot(xticks=60,figsize=(20,20),kind='bar',stacked=True)                  
+
+'''xax =[]
+for i in range(0,1440,5):#change step
+    xax.append(str(i)+'-'+str(i+5))#change step
+plt.xlabel('Interval')
+plt.ylabel('energy_type')   
+plt.figtext(0.9,0.8,'1:Grid')
+plt.figtext(0.9,0.75,'0: Renewable')
+plt.figure(figsize=[20,20])
+plt.plot(xax,grap) 
+ '''
 ab = pd.read_csv('106953_36.33_-110.74_1998.csv')  #column 8 
+status=[]
+for d in data1:
+    p=[]
+    p.append(d[0])
+    time=[]
+    t= False
+    for x in range(len(d)-1):
+        x=x+1
+        if x==12*24 and t==True:#change step
+            t=False
+            time.append(str(int((x*5)/60)) + ':'+str((x*5)%60))#change step
+        elif d[x]==0 and t==True:
+            t=False
+            time.append(str(int(((x-1)*5)/60)) + ':'+str(((x-1)*5)%60))#change step
+        elif d[x]>0 and t==False:
+            t=True
+            time.append(str(int(((x-1)*5)/60))+':'+str(((x-1)*5)%60))#change step
+    p.append(time)
+    status.append(p)        
+row_list=[]
+for s in status:
+    for i in range(len(s[1])):
+        tem=[]
+        tem.append(s[0])
+        tem.append(s[1][i])
+        if i%2==0:
+            tem.append(1)
+        else:
+            tem.append(0)
+        row_list.append(tem)
+
+with open('devices.csv', 'w', newline='') as file:
+    writer = csv.writer(file, delimiter=' ')
+    writer.writerows(row_list)            
+    
            
             
             
