@@ -1,3 +1,8 @@
+"""
+@author : Jeevesh Juneja 
+(https://github.com/Jeevesh8/)
+"""
+
 from Adafruit_IO import Client, Feed, Data, RequestError
 import device_feed_map as dfm 
 import argparse
@@ -9,8 +14,8 @@ parser.add_argument('--time', help='UNIX timestamp for swithcing time')
 args=parser.parse_args()
 
  
-ADAFRUIT_IO_USERNAME = "Archit149"
-ADAFRUIT_IO_KEY = "2619ba57dee340489754ca6dac5de74b"
+ADAFRUIT_IO_USERNAME = input('Adafruit-io-username :')
+ADAFRUIT_IO_KEY = input('Adafruit-io-key :')
  
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 

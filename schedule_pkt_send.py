@@ -1,3 +1,8 @@
+"""
+@author : Jeevesh Juneja 
+(https://github.com/Jeevesh8/)
+"""
+
 import utils
 import device_feed_map as dfm
 from data_sender import send

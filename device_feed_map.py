@@ -1,3 +1,7 @@
+"""
+@author : Jeevesh Juneja 
+(https://github.com/Jeevesh8/)
+"""
 import os
 import pickle
 import fileinput
@@ -39,19 +43,20 @@ def add_new_device(new_device_name, new_feed_number, write=1) :
         
 def make_new_dic(files=None) :
     '''
-    Input any file/stdin having "<device_name>:<feed_num>" in each line.(No space on either side of ':')
-    <feed_num> must be element of [0,N_FEEDS-1]
+    Input any file/stdin having "<device_name>:<feed_num>:<0/1>" in each line.(No space on either side of ':')
+    <feed_num> must be element of [0,N_FEEDS-1];    <0/1> according to whether device is off or on initially.
     Makes new dictionary of format {'device_name' : feed_number}
     feed_number is string in final dictionary.
     '''    
     device_feed_dic = {}
     initial_device_states = {}
-    
+    print('Enter <device>:<feed>:<0/1> values')
     for line in fileinput.input(files=files) :
         line = line.rstrip()
-        new_device_name, new_feed_number = line.split(':')
+        if line=='000' :  break
+        new_device_name, new_feed_number, initial_state = line.split(':')
         add_new_device(new_device_name, new_feed_number, write=0)
-        initial_device_states[new_device_name] = 0
+        initial_device_states[new_device_name] = int(initial_state)
     
     write_files(device_feed_dic, initial_device_states)
     return device_feed_dic, initial_device_states

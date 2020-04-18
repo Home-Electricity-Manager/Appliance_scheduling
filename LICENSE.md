@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2020 Aryan gupta
+Copyright (c) 2020 Aryan gupta, Jeevesh Juneja
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
